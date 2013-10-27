@@ -24,6 +24,10 @@ namespace Tasky.Core {
 		{
 			return TaskRepository.SaveTask(item);
 		}
+		public static int SaveTaskDB (SQLLiteDB item)
+		{
+			return TaskRepository.CreateDatabase(item);
+		}
 		
 		public static int DeleteTask(int id)
 		{

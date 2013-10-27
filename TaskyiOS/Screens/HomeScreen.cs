@@ -14,12 +14,18 @@ namespace Tasky.Screens {
 	public class HomeScreen : DialogViewController {
 		// 
 		List<Task> tasks;
+		List<SQLLiteDB> sqllitedbs;
 		
 		// MonoTouch.Dialog individual TaskDetails view (uses /AL/TaskDialog.cs wrapper class)
 		BindingContext context;
 		TaskDialog taskDialog;
 		Task currentTask;
 		DialogViewController detailsScreen;
+
+		BindingContext contextSQL;
+		SQLLiteDBDialog sqlliteDialog;
+		SQLLiteDB currentsqllitedb;
+		DialogViewController detailsSQLScreen;
 
 		public HomeScreen () : base (UITableViewStyle.Plain, null)
 		{
@@ -29,9 +35,41 @@ namespace Tasky.Screens {
 		protected void Initialize()
 		{
 			NavigationItem.SetRightBarButtonItem (new UIBarButtonItem (UIBarButtonSystemItem.Add), false);
+			NavigationItem.SetLeftBarButtonItem (new UIBarButtonItem (UIBarButtonSystemItem.Play), false);
+
+
 			NavigationItem.RightBarButtonItem.Clicked += (sender, e) => { ShowTaskDetails(new Task()); };
+			NavigationItem.LeftBarButtonItem.Clicked += (sender, e) => 
+			{ 
+				ShowSQLDBDetails(new SQLLiteDB()); 
+			};
+		}
+
+		protected void ShowSQLDBDetails(SQLLiteDB sqllitedb)
+		{
+			currentsqllitedb = sqllitedb;
+			sqlliteDialog = new SQLLiteDBDialog (sqllitedb);
+			contextSQL = new BindingContext (this, sqlliteDialog, "SQL Lite Details");
+			detailsSQLScreen = new DialogViewController (contextSQL.Root, true);
+			ActivateController(detailsSQLScreen);
 		}
 		
+		public void CreateDatabase()
+		{
+			contextSQL.Fetch (); // re-populates with updated values
+			currentsqllitedb.UserName = sqlliteDialog.UserName;
+			TaskManager.SaveTaskDB(currentsqllitedb);
+
+			var person = new Person { FirstName = "John " + DateTime.Now.Ticks, LastName = "Doe"};
+			using (var db = new SQLite.SQLiteConnection(_pathToDatabase ))
+			{
+				db.Insert(person);
+			}
+
+			NavigationController.PopViewControllerAnimated (true);
+		}
+
+		#region TASK
 		protected void ShowTaskDetails(Task task)
 		{
 			currentTask = task;
@@ -87,5 +125,6 @@ namespace Tasky.Screens {
 		{
 			TaskManager.DeleteTask(tasks[rowId].ID);
 		}
+		#endregion
 	}
 }

@@ -98,6 +98,18 @@ namespace Tasky.Core {
 			WriteXml ();
 			return max;
 		}
+
+		/// <summary>
+		/// create DB
+		/// </summary>
+		public static int CreateDatabase (SQLLiteDB item)
+		{ 
+			using (var conn= new SQLite.SQLiteConnection(_pathToDatabase))
+			{
+				conn.CreateTable<Person>();
+			}
+			return 100;
+		}
 		
 		public static int DeleteTask(int id)
 		{

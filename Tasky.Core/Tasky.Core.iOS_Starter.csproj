@@ -34,6 +34,8 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
+    <Reference Include="Mono.Data.Sqlite" />
+    <Reference Include="System.Data" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -42,5 +44,7 @@
     <Compile Include="Task.cs" />
     <Compile Include="TaskManager.cs" />
     <Compile Include="TaskRepository.cs" />
+    <Compile Include="SQLLiteDB.cs" />
+    <Compile Include="SQLLite.cs" />
   </ItemGroup>
 </Project>
